@@ -2,34 +2,35 @@ load('VulvalDevelopmentPropsClass.mat')
 
 
 numparamTrain=1000;
+numRepetitions=1000;
 
 conditions=1:9;
 NumCond=numel(conditions);
 
-NumCondTotal=numel(unique(MatrixPropElena(:,end)));
-NumParam=size(MatrixPropElena,1)/NumCondTotal;
+NumCondTotal=numel(unique(MatrixProps(:,end)));
+NumParam=size(MatrixProps,1)/NumCondTotal;
 
 if isfile('ML_Analysis_Prop_9_All_Test_1000.mat')
     load('ML_Analysis_Prop_9_All_Test_1000.mat')
     it0=it;
 else
-    ResultsPropTrain = zeros(1000, 1);
-    ResultsPropTest = zeros(1000, 1);
+    ResultsPropTrain = zeros(numRepetitions, 1);
+    ResultsPropTest = zeros(numRepetitions, 1);
     save('ML_Analysis_Prop_9_All_Test_1000.mat', 'ResultsPropTrain', 'ResultsPropTest', 'conditions');
     it0=0;
 end
 
-for it=it0+1:20
+for it=it0+1:numRepetitions/50
     ResultsPropTrainTemp = zeros(50, 1);
     ResultsPropTestTemp = zeros(50, 1);
     parfor rep=1:50
 
         %%Generate training
         iparam = randperm(NumParam, numparamTrain);
-        PropsTrain=zeros(numparamTrain*NumCond, size(MatrixPropElena,2));
+        PropsTrain=zeros(numparamTrain*NumCond, size(MatrixProps,2));
         for i=1:numparamTrain
             for Condidx=1:NumCond
-                aux=MatrixPropElena(MatrixPropElena(:,end)==conditions(Condidx),:);
+                aux=MatrixProps(MatrixProps(:,end)==conditions(Condidx),:);
                 PropsTrain((i-1)*NumCond+Condidx,:)=aux(iparam(i),:);
             end
         end
@@ -40,7 +41,7 @@ for it=it0+1:20
         PropsTest=zeros(size(PropsTrain));
         for i=1:numparamTrain
             for Condidx=1:NumCond
-                aux=MatrixPropElena(MatrixPropElena(:,end)==conditions(Condidx),:);
+                aux=MatrixProps(MatrixProps(:,end)==conditions(Condidx),:);
                 PropsTest((i-1)*NumCond+Condidx,:)=aux(IndicesTest(iparamT(i)),:);
             end
         end

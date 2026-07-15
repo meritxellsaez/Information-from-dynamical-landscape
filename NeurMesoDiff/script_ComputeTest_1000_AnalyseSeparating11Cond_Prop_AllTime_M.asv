@@ -9,7 +9,6 @@ for i=1:NumTimes
 end
 
 numparamTrain=1000;
-numRepetitions=1000;
 
 Cases={1:11};
 conditions=Cases{1};
@@ -18,12 +17,12 @@ if isfile('ML_Analysis_Prop_11_All_Test_1000.mat')
     load('ML_Analysis_Prop_11_All_Test_1000.mat')
     it0=it;
 else
-    ResultsPropTrain = zeros(numRepetitions, numel(Cases));
-    ResultsPropTest = zeros(numRepetitions, numel(Cases));
+    ResultsPropTrain = zeros(numparamTrain, numel(Cases));
+    ResultsPropTest = zeros(numparamTrain, numel(Cases));
     save('ML_Analysis_Prop_11_All_Test_1000.mat', 'ResultsPropTrain', 'ResultsPropTest', 'Cases');
     it0=0;
 end
-for it=it0+1:numRepetitions/50
+for it=it0+1:numparamTrain/50
     ResultsPropTrainTemp = zeros(50, numel(Cases));
     ResultsPropTestTemp = zeros(50, numel(Cases));
     parfor rep=1:50
@@ -75,8 +74,7 @@ for it=it0+1:numRepetitions/50
     indxmatrix=50*(it-1)+(1:50);
     ResultsPropTrain(indxmatrix,:)=ResultsPropTrainTemp;
     ResultsPropTest(indxmatrix,:)=ResultsPropTestTemp;
-    Potency=median(ResultsPropTest);
-    save('ML_Analysis_Prop_11_All_Test_1000.mat', 'ResultsPropTrain', 'ResultsPropTest', 'Cases', 'Potency');
+    save('ML_Analysis_Prop_11_All_Test_1000.mat', 'ResultsPropTrain', 'ResultsPropTest', 'Cases', 'it');
 end
 
 
